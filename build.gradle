@@ -1,0 +1,194 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.2.RELEASE'
+        classpath 'gradle.plugin.com.github.lkishalmi.gradle:gradle-gatling-plugin:0.4.1'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+    }
+}
+
+allprojects {
+    apply plugin: 'idea'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+
+    dependencies {
+        compile 'com.google.guava:guava:20.+'
+
+        // logging
+        compile 'org.slf4j:slf4j-api:1.7.+'
+        compile 'ch.qos.logback:logback-classic:1.1.+'
+
+        // testing
+        testCompile 'junit:junit:4.+'
+        testCompile 'org.hamcrest:hamcrest-library:1.+'
+    }
+}
+
+project(':external') {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'com.github.lkishalmi.gatling'
+    apply plugin: 'scala'
+
+    dependencies {
+        //scala because of gatling
+        compile 'org.scala-lang:scala-library:2.11.+'
+
+        //application
+        compile project(':legacy')
+        compile 'org.springframework.boot:spring-boot-starter-web'
+        compile 'org.springframework.boot:spring-boot-starter-hateoas'
+        compile 'org.springframework.boot:spring-boot-starter-actuator'
+        compile 'org.springframework.kafka:spring-kafka:1.1.1.RELEASE'
+        compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.+'
+        //devtools
+        compile 'org.springframework.boot:spring-boot-devtools'
+        //database
+        compile 'com.h2database:h2:1.4.193'
+
+        //testing
+        testCompile 'org.springframework.boot:spring-boot-starter-test'
+        testCompile ('org.springframework.kafka:spring-kafka-test:1.1.1.RELEASE') {
+            exclude module: 'log4j'
+        }
+        testCompile 'com.jayway.jsonpath:json-path-assert:2.2.0'
+        testCompile 'org.exparity:hamcrest-date:2.0.4'
+        testCompile 'org.awaitility:awaitility:2.0.0'
+
+        //scala test
+        gatlingCompile 'org.scalatest:scalatest_2.11:3.0.0'
+        gatlingRuntime 'com.h2database:h2:1.4.193'
+    }
+    build.dependsOn gatlingClasses
+
+    bootRepackage {
+        excludeDevtools = true
+    }
+
+    gatling {
+        toolVersion = '2.2.3'
+    }
+
+    //IDEA fix
+    ScalaCompileOptions.metaClass.daemonServer = true
+    ScalaCompileOptions.metaClass.fork = true
+    ScalaCompileOptions.metaClass.useAnt = false
+    ScalaCompileOptions.metaClass.useCompileDaemon = false
+
+    task h2console(type:JavaExec) {
+        main = 'org.h2.tools.Console'
+        classpath = sourceSets.main.runtimeClasspath
+    }
+}
+
+project(':legacy') {
+    dependencies {
+        compile 'org.springframework.boot:spring-boot-starter-data-jpa:1.4.2.RELEASE'
+    }
+}
+
+project(':spark') {
+    apply plugin: 'scala'
+    apply plugin: 'groovy'
+
+    sourceSets {
+        systemTest
+    }
+
+    configurations {
+        systemTestCompile.extendsFrom testCompile
+        systemTesttRuntime.extendsFrom testRuntime
+    }
+
+    dependencies {
+        //scala
+        compile 'org.scala-lang:scala-library:2.11.+'
+        //groovy
+        compile "org.codehaus.groovy:groovy-all:2.4.+"
+
+        //spark
+        compile('org.apache.spark:spark-core_2.11:2.0.2') {
+            exclude module: 'slf4j-log4j12'
+        }
+        compile('org.apache.spark:spark-sql_2.11:2.0.2') {
+            exclude module: 'slf4j-log4j12'
+        }
+        compile('org.apache.spark:spark-streaming_2.11:2.0.2') {
+            exclude module: 'slf4j-log4j12'
+        }
+        compile('org.apache.spark:spark-streaming-kafka-0-10_2.11:2.0.2') {
+            exclude module: 'slf4j-log4j12'
+        }
+        //json
+        compile 'org.json4s:json4s-native_2.11:3.2.11'
+        compile 'org.json4s:json4s-jackson_2.11:3.2.11'
+        //cassandra
+        compile('com.datastax.spark:spark-cassandra-connector_2.11:2.0.0-M3') {
+            exclude module: 'slf4j-log4j12'
+        }
+        //database
+        compile 'com.h2database:h2:1.4.193'
+
+        testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+        testCompile('com.athaydes:spock-reports:1.2.+' ) {
+            transitive = false
+        }
+        testCompile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+        testCompile 'com.github.zhicwu:cassandra-jdbc-driver:0.6.1'
+    }
+
+    build.dependsOn systemTestClasses
+
+    task aggregation(type:JavaExec) {
+        main = 'net.fast2smart.batch.AccountAggregation'
+        classpath = sourceSets.main.runtimeClasspath
+    }
+
+    task streaming(type:JavaExec) {
+        main = 'net.fast2smart.streaming.PurchaseStreaming'
+        classpath = sourceSets.main.runtimeClasspath
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.2'
+    distributionUrl = 'https://services.gradle.org/distributions/gradle-3.2-all.zip'
+}
+
+idea {
+    targetVersion = '16'
+    //IDEA fix
+    ScalaCompileOptions.metaClass.daemonServer = true
+    ScalaCompileOptions.metaClass.fork = true
+    ScalaCompileOptions.metaClass.useAnt = false
+    ScalaCompileOptions.metaClass.useCompileDaemon = false
+}

@@ -1,0 +1,26 @@
+brokers:
+  - localhost:9092
+producer:
+  key.serializer: org.apache.kafka.common.serialization.LongSerializer
+  value.serializer: org.apache.kafka.common.serialization.StringSerializer
+consumer:
+  key.deserializer: org.apache.kafka.common.serialization.LongDeserializer
+  value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  enable.auto.commit: off
+  group.id: fast2smart
+
+
+spring:
+  jackson.serialization:
+    fail_on_empty_beans: false
+    indent_output: true
+    write_dates_as_timestamps: false
+
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:../db/fast2smart;AUTO_SERVER=TRUE
+    username: sa
+
+  jpa:
+    properties.hibernate.dialect: org.hibernate.dialect.H2Dialect
+    hibernate.ddl-auto: update
