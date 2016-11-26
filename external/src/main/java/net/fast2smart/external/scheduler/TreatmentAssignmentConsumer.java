@@ -61,7 +61,9 @@ public class TreatmentAssignmentConsumer {
                 LOGGER.error("Exception occured: {}", e.getMessage());
             }
         });
-        kafkaConsumer.commitSync();
+        if (!records.isEmpty()) {
+            kafkaConsumer.commitSync();
+        }
     }
 
     @PostConstruct
