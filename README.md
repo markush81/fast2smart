@@ -53,10 +53,10 @@ At any given time your total information is: `precomputed + increment`.
 ### Implementation
 
 1. REST resource *Purchase*
-	2. 	send to kafka topic `purchase`
+	2. 	send to kafka topic `purchases`
 	3. process the purchase event (save and update member account)
 4. Apache Spark Job to aggregate the purchases into monthly balance (Batch Layer - Precomputed View)
-5. Apache Spark Streaming Job for kafka topic `purchase`
+5. Apache Spark Streaming Job for kafka topic `purchases`
    6. does the delta calculation for monthly balance (Speed Layer - Incremental View)
    7. evaluates the rule conditions (Serving Layer)
 
