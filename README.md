@@ -1,4 +1,7 @@
 # From Fast to Smart Data
+
+[![Build Status](https://travis-ci.org/markush81/fast2smart.svg?branch=master)](https://travis-ci.org/markush81/fast2smart)
+
 #### Lambda Architecture with Apache Spark, Kafka and Cassandra
 
 Today everyone is talking about BigData, FastData, SmartData and Realtime Decisioning. But what is it all about? Why and especially how to do it?
