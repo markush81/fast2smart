@@ -45,6 +45,7 @@ public class TreatmentAssignmentConsumer {
     private ObjectMapper objectMapper;
 
     @Scheduled(initialDelay = 0, fixedDelay = 500L)
+    @SuppressWarnings({"squid:S1166"})
     public void consumeTreatmentAssignments() {
         ConsumerRecords<Long, String> records = kafkaConsumer.poll(10);
         records.iterator().forEachRemaining(record -> {
@@ -58,7 +59,7 @@ public class TreatmentAssignmentConsumer {
                 //This is intended, since UniqueConstraint in treatment will we violated, which is expected. Of course catching all RollbackException is not the "real" solution.
                 LOGGER.debug("Treatment not saved: {}", e.getMessage());
             } catch (Exception e) {
-                LOGGER.error("Exception occured: {}", e.getMessage());
+                LOGGER.error("Exception occured: {}", e.getMessage(), e);
             }
         });
         if (!records.isEmpty()) {

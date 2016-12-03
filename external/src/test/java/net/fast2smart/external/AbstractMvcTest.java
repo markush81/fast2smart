@@ -16,6 +16,7 @@ import static org.mockito.Mockito.reset;
 /**
  * Created by markus on 03/11/2016.
  */
+@SuppressWarnings({"squid:S2187"})
 public class AbstractMvcTest {
 
     @Autowired

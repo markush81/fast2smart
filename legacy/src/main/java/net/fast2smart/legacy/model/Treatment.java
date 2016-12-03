@@ -13,8 +13,7 @@ public class Treatment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long _id;
+    private Long id;
     @OneToOne(optional = false)
     private Member member;
     @Column(nullable = false)
@@ -25,6 +24,7 @@ public class Treatment {
     @Column(nullable = false)
     private LocalDateTime assigned;
 
+    @SuppressWarnings({"squid:S1186"})
     public Treatment() {
     }
 
@@ -36,11 +36,11 @@ public class Treatment {
     }
 
     public Long getId() {
-        return _id;
+        return id;
     }
 
-    public void setId(Long _id) {
-        this._id = _id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Member getMember() {
@@ -76,11 +76,16 @@ public class Treatment {
     }
 
     @Override
+    @SuppressWarnings({"squid:S1067"})
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Treatment treatment = (Treatment) o;
-        return Objects.equals(_id, treatment._id) &&
+        return Objects.equals(id, treatment.id) &&
                 Objects.equals(member, treatment.member) &&
                 partner == treatment.partner &&
                 Objects.equals(headline, treatment.headline) &&
@@ -89,13 +94,13 @@ public class Treatment {
 
     @Override
     public int hashCode() {
-        return Objects.hash(_id, member, partner, headline, assigned);
+        return Objects.hash(id, member, partner, headline, assigned);
     }
 
     @Override
     public String toString() {
         return "Treatment{" +
-                "_id=" + _id +
+                "id=" + id +
                 ", member=" + member +
                 ", partner=" + partner +
                 ", headline='" + headline + '\'' +

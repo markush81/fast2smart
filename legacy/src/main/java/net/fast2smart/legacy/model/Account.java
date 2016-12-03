@@ -12,8 +12,7 @@ public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long _id;
+    private Long id;
     @OneToOne(optional = false)
     private Member member;
     @Column(nullable = false)
@@ -23,6 +22,7 @@ public class Account {
     @Column(nullable = false)
     private LocalDateTime lastUpdate;
 
+    @SuppressWarnings({"squid:S1186"})
     public Account() {
     }
 
@@ -38,8 +38,8 @@ public class Account {
         this(null, member, basePoints, statusPoints, lastUpdate);
     }
 
-    public Account(Long _id, Member member, Long basePoints, Long statusPoints, LocalDateTime lastUpdate) {
-        this._id = _id;
+    public Account(Long id, Member member, Long basePoints, Long statusPoints, LocalDateTime lastUpdate) {
+        this.id = id;
         this.member = member;
         this.basePoints = basePoints;
         this.statusPoints = statusPoints;
@@ -48,11 +48,11 @@ public class Account {
 
 
     public Long getId() {
-        return _id;
+        return id;
     }
 
     public void setId(Long id) {
-        this._id = id;
+        this.id = id;
     }
 
     public Member getMember() {
@@ -94,11 +94,16 @@ public class Account {
     }
 
     @Override
+    @SuppressWarnings({"squid:S1067"})
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Account account = (Account) o;
-        return Objects.equals(_id, account._id) &&
+        return Objects.equals(id, account.id) &&
                 Objects.equals(member, account.member) &&
                 Objects.equals(basePoints, account.basePoints) &&
                 Objects.equals(statusPoints, account.statusPoints) &&
@@ -107,13 +112,13 @@ public class Account {
 
     @Override
     public int hashCode() {
-        return Objects.hash(_id, member, basePoints, statusPoints, lastUpdate);
+        return Objects.hash(id, member, basePoints, statusPoints, lastUpdate);
     }
 
     @Override
     public String toString() {
         return "Account{" +
-                "_id=" + _id +
+                "id=" + id +
                 ", member=" + member +
                 ", basePoints=" + basePoints +
                 ", statusPoints=" + statusPoints +

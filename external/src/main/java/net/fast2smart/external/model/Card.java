@@ -17,6 +17,7 @@ public class Card extends ResourceSupport {
     private Long number;
     private Partner partner;
 
+    @SuppressWarnings({"squid:S1186"})
     public Card() {
     }
 
@@ -44,8 +45,12 @@ public class Card extends ResourceSupport {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Card card = (Card) o;
         return Objects.equals(number, card.number) &&
                 partner == card.partner;

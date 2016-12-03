@@ -9,7 +9,6 @@ import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -33,6 +32,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 @DirtiesContext
 @ContextConfiguration
+@SuppressWarnings({"squid:S2187"})
 public class AbstractKafkaIntegrationTest {
 
     @ClassRule

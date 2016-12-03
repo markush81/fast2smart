@@ -12,8 +12,7 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long _id;
+    private Long id;
     @Column(nullable = false)
     private String lastname;
     @Column(nullable = false)
@@ -26,6 +25,7 @@ public class Member {
     @Column(nullable = false)
     private LocalDateTime enrolmentDate;
 
+    @SuppressWarnings({"squid:S1186"})
     public Member() {
     }
 
@@ -34,7 +34,7 @@ public class Member {
     }
 
     public Member(Long id, String lastname, String firstname, Long cardnumber, Partner partner, LocalDateTime enrolmentDate) {
-        this._id = id;
+        this.id = id;
         this.lastname = lastname;
         this.firstname = firstname;
         this.cardnumber = cardnumber;
@@ -43,11 +43,11 @@ public class Member {
     }
 
     public Long getId() {
-        return _id;
+        return id;
     }
 
-    public void setId(Long _id) {
-        this._id = _id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getLastname() {
@@ -91,11 +91,16 @@ public class Member {
     }
 
     @Override
+    @SuppressWarnings({"squid:S1067"})
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Member member = (Member) o;
-        return Objects.equals(_id, member._id) &&
+        return Objects.equals(id, member.id) &&
                 Objects.equals(lastname, member.lastname) &&
                 Objects.equals(firstname, member.firstname) &&
                 Objects.equals(cardnumber, member.cardnumber) &&
@@ -105,13 +110,13 @@ public class Member {
 
     @Override
     public int hashCode() {
-        return Objects.hash(_id, lastname, firstname, cardnumber, partner, enrolmentDate);
+        return Objects.hash(id, lastname, firstname, cardnumber, partner, enrolmentDate);
     }
 
     @Override
     public String toString() {
         return "Member{" +
-                "_id=" + _id +
+                "id=" + id +
                 ", lastname='" + lastname + '\'' +
                 ", firstname='" + firstname + '\'' +
                 ", cardnumber=" + cardnumber +

@@ -18,6 +18,7 @@ public class AccountStatement extends ResourceSupport {
     private Long statusPoints;
     private LocalDateTime lastUpdate;
 
+    @SuppressWarnings({"squid:S1186"})
     public AccountStatement() {
     }
 
@@ -26,6 +27,10 @@ public class AccountStatement extends ResourceSupport {
         this.basePoints = basePoints;
         this.statusPoints = statusPoints;
         this.lastUpdate = lastUpdate;
+    }
+
+    public static AccountStatement fromAccount(Account account) {
+        return new AccountStatement(account.getMember().getCardnumber(), account.getBasePoints(), account.getstatusPoints(), account.getLastUpdate());
     }
 
     public Long getBasePoints() {
@@ -60,17 +65,20 @@ public class AccountStatement extends ResourceSupport {
         this.cardnumber = cardnumber;
     }
 
-    public static AccountStatement fromAccount(Account account) {
-        return new AccountStatement(account.getMember().getCardnumber(), account.getBasePoints(), account.getstatusPoints(), account.getLastUpdate());
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
         AccountStatement that = (AccountStatement) o;
-        return Objects.equals(basePoints, that.basePoints) &&
+        return Objects.equals(cardnumber, that.cardnumber) &&
+                Objects.equals(basePoints, that.basePoints) &&
                 Objects.equals(statusPoints, that.statusPoints) &&
                 Objects.equals(lastUpdate, that.lastUpdate);
     }
