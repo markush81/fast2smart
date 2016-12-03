@@ -23,6 +23,7 @@ public class ExternalMember extends ResourceSupport {
 
     private LocalDateTime enrolmentDate;
 
+    @SuppressWarnings({"squid:S1186"})
     public ExternalMember() {
     }
 
@@ -37,6 +38,10 @@ public class ExternalMember extends ResourceSupport {
         this.firstname = firstname;
         this.card = card;
         this.enrolmentDate = enrolmentDate;
+    }
+
+    public static ExternalMember fromMember(Member member) {
+        return new ExternalMember(member.getId(), member.getLastname(), member.getFirstname(), new Card(member.getCardnumber(), member.getPartner()), member.getEnrolmentDate());
     }
 
     @JsonIgnore
@@ -84,14 +89,14 @@ public class ExternalMember extends ResourceSupport {
         return new Member(lastname, firstname, card.getNumber(), card.getPartner(), enrolmentDate);
     }
 
-    public static ExternalMember fromMember(Member member) {
-        return new ExternalMember(member.getId(), member.getLastname(), member.getFirstname(), new Card(member.getCardnumber(), member.getPartner()), member.getEnrolmentDate());
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ExternalMember that = (ExternalMember) o;
         return Objects.equals(memberId, that.memberId) &&
                 Objects.equals(lastname, that.lastname) &&

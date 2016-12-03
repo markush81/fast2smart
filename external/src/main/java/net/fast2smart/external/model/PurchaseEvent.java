@@ -29,6 +29,7 @@ public class PurchaseEvent extends ResourceSupport {
     private Long memberId;
     private LocalDateTime date;
 
+    @SuppressWarnings({"squid:S1186"})
     public PurchaseEvent() {
     }
 
@@ -37,6 +38,7 @@ public class PurchaseEvent extends ResourceSupport {
         this(null, cardnumber, partner, amount, currency, basePoints, statusPoints, date);
     }
 
+    @SuppressWarnings({"squid:S00107"})
     public PurchaseEvent(Long memberId, Long cardnumber, Partner partner, BigDecimal amount, Currency currency, Long basePoints, Long statusPoints, LocalDateTime date) {
         this.cardnumber = cardnumber;
         this.partner = partner;
@@ -46,6 +48,10 @@ public class PurchaseEvent extends ResourceSupport {
         this.statusPoints = statusPoints;
         this.memberId = memberId;
         this.date = date;
+    }
+
+    public static PurchaseEvent fromPurchase(Purchase purchase) {
+        return new PurchaseEvent(purchase.getMember().getId(), purchase.getMember().getCardnumber(), purchase.getPartner(), purchase.getAmount(), purchase.getCurrency(), purchase.getBasePoints(), purchase.getStatusPoints(), purchase.getDate());
     }
 
     public Long getCardnumber() {
@@ -117,14 +123,15 @@ public class PurchaseEvent extends ResourceSupport {
         return new Purchase(member, partner, amount, currency, basePoints, statusPoints, date);
     }
 
-    public static PurchaseEvent fromPurchase(Purchase purchase) {
-        return new PurchaseEvent(purchase.getMember().getId(), purchase.getMember().getCardnumber(), purchase.getPartner(), purchase.getAmount(), purchase.getCurrency(), purchase.getBasePoints(), purchase.getStatusPoints(), purchase.getDate());
-    }
-
     @Override
+    @SuppressWarnings({"squid:S1067"})
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PurchaseEvent that = (PurchaseEvent) o;
         return Objects.equals(cardnumber, that.cardnumber) &&
                 partner == that.partner &&

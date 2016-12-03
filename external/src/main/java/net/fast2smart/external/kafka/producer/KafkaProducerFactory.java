@@ -47,7 +47,7 @@ public class KafkaProducerFactory<K, V> {
      */
     @Bean
     public Producer<K, V> kafkaProducer() {
-        return new KafkaProducer<K, V>(producerConfigs());
+        return new KafkaProducer<>(producerConfigs());
     }
 
 }

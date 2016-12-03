@@ -19,6 +19,7 @@ public class ExternalTreatment extends ResourceSupport {
     private String headline;
     private LocalDateTime assigned;
 
+    @SuppressWarnings({"squid:S1186"})
     public ExternalTreatment() {
     }
 
@@ -27,6 +28,10 @@ public class ExternalTreatment extends ResourceSupport {
         this.partner = partner;
         this.headline = headline;
         this.assigned = assigned;
+    }
+
+    public static ExternalTreatment fromTreatment(Treatment treatment) {
+        return new ExternalTreatment(treatment.getMember().getCardnumber(), treatment.getPartner(), treatment.getHeadline(), treatment.getAssigned());
     }
 
     public Long getCardnumber() {
@@ -61,15 +66,17 @@ public class ExternalTreatment extends ResourceSupport {
         this.assigned = assigned;
     }
 
-    public static ExternalTreatment fromTreatment(Treatment treatment) {
-        return new ExternalTreatment(treatment.getMember().getCardnumber(), treatment.getPartner(), treatment.getHeadline(), treatment.getAssigned());
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
         ExternalTreatment externalTreatment = (ExternalTreatment) o;
         return Objects.equals(cardnumber, externalTreatment.cardnumber) &&
                 partner == externalTreatment.partner &&

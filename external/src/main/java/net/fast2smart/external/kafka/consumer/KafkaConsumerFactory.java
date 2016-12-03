@@ -31,7 +31,7 @@ public class KafkaConsumerFactory<K, V> {
     @Bean
     @Scope(scopeName = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public Consumer<K, V> kafkaConsumer() {
-        return new KafkaConsumer<K, V>(consumerConfigs());
+        return new KafkaConsumer<>(consumerConfigs());
     }
 
 }

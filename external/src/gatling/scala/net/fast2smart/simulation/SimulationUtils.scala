@@ -14,7 +14,7 @@ class PurchaseFeeder extends Feeder[Number] {
 
   override def next(): Map[String, Number] = {
     val amount = Math.round((random.nextFloat() + random.nextInt(100).abs.toFloat) * 100) / 100.0
-    val basePoints = amount.toLong / 2 // 2€ = 1°
+    val basePoints = amount.toLong / 2
     val statusPoints = basePoints * random.nextInt(11) // max 10-fach
     Map("amount" -> amount, "basePoints" -> basePoints, "statusPoints" -> statusPoints)
   }
@@ -46,11 +46,6 @@ class DateFeeder(name: String, lowerBound: Int, upperBound: Int) extends Feeder[
 
   private val random = new Random
 
-  // random number in between [a...b]
-  private def randInt(a: Int, b: Int) = random.nextInt(b - a) + a
-
-  private def daysOfMonth(year: Int, month: Int) = LocalDateTime.of(year, month, 1, 0, 0).range(ChronoField.DAY_OF_MONTH).getMaximum.toInt
-
   // always return true as this feeder can be polled infinitively
   override def hasNext = true
 
@@ -61,4 +56,9 @@ class DateFeeder(name: String, lowerBound: Int, upperBound: Int) extends Feeder[
 
     Map(name -> LocalDateTime.of(year, month, day, randInt(1, 24), randInt(0, 60)))
   }
+
+  // random number in between [a...b]
+  private def randInt(a: Int, b: Int) = random.nextInt(b - a) + a
+
+  private def daysOfMonth(year: Int, month: Int) = LocalDateTime.of(year, month, 1, 0, 0).range(ChronoField.DAY_OF_MONTH).getMaximum.toInt
 }

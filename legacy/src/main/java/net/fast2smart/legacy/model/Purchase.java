@@ -14,8 +14,7 @@ public class Purchase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long _id;
+    private Long id;
     @ManyToOne(optional = false)
     private Member member;
     @Column(nullable = false)
@@ -31,6 +30,7 @@ public class Purchase {
     @Column(nullable = false)
     private LocalDateTime date;
 
+    @SuppressWarnings({"squid:S1186"})
     public Purchase() {
     }
 
@@ -42,8 +42,9 @@ public class Purchase {
         this(null, member, partner, amount, currency, basePoints, statusPoints, date);
     }
 
+    @SuppressWarnings({"squid:S00107"})
     public Purchase(Long id, Member member, Partner partner, BigDecimal amount, Currency currency, Long basePoints, Long statusPoints, LocalDateTime date) {
-        this._id = id;
+        this.id = id;
         this.member = member;
         this.partner = partner;
         this.amount = amount;
@@ -55,11 +56,11 @@ public class Purchase {
 
     public Long getId() {
 
-        return _id;
+        return id;
     }
 
-    public void setId(Long _id) {
-        this._id = _id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Member getMember() {
@@ -119,11 +120,16 @@ public class Purchase {
     }
 
     @Override
+    @SuppressWarnings({"squid:S1067"})
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Purchase purchase = (Purchase) o;
-        return Objects.equals(_id, purchase._id) &&
+        return Objects.equals(id, purchase.id) &&
                 Objects.equals(member, purchase.member) &&
                 partner == purchase.partner &&
                 Objects.equals(amount, purchase.amount) &&
@@ -135,13 +141,13 @@ public class Purchase {
 
     @Override
     public int hashCode() {
-        return Objects.hash(_id, member, partner, amount, currency, basePoints, statusPoints, date);
+        return Objects.hash(id, member, partner, amount, currency, basePoints, statusPoints, date);
     }
 
     @Override
     public String toString() {
         return "Purchase{" +
-                "_id=" + _id +
+                "id=" + id +
                 ", member=" + member +
                 ", partner=" + partner +
                 ", amount=" + amount +
