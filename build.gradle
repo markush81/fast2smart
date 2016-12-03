@@ -15,7 +15,7 @@ plugins {
 sonarqube {
     properties {
         property "sonar.projectName", "From Fast to Smart Data"
-        property "sonar.projectKey", "net.fast2smart"
+        property "sonar.projectKey", "markush81.net.fast2smart"
     }
 }
 
@@ -188,8 +188,8 @@ project(':spark') {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.2'
-    distributionUrl = 'https://services.gradle.org/distributions/gradle-3.2-all.zip'
+    gradleVersion = '3.2.1'
+    distributionUrl = 'https://services.gradle.org/distributions/gradle-3.2.1-all.zip'
 }
 
 idea {

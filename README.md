@@ -1,6 +1,6 @@
 # From Fast to Smart Data
 
-[![Build Status](https://travis-ci.org/markush81/fast2smart.svg?branch=master)](https://travis-ci.org/markush81/fast2smart)
+[![Build Status](https://travis-ci.org/markush81/fast2smart.svg?branch=master)](https://travis-ci.org/markush81/fast2smart) [![Quality Gate](https://sonarqube.com/api/badges/gate?key=markush81.net.fast2smart)](https://sonarqube.com/dashboard/index/markush81.net.fast2smart)
 
 #### Lambda Architecture with Apache Spark, Kafka and Cassandra
 
