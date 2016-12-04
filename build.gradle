@@ -106,12 +106,6 @@ project(':external') {
         toolVersion = '2.2.3'
     }
 
-    //IDEA fix
-    ScalaCompileOptions.metaClass.daemonServer = true
-    ScalaCompileOptions.metaClass.fork = true
-    ScalaCompileOptions.metaClass.useAnt = false
-    ScalaCompileOptions.metaClass.useCompileDaemon = false
-
     task h2console(type:JavaExec) {
         main = 'org.h2.tools.Console'
         classpath = sourceSets.main.runtimeClasspath
@@ -134,7 +128,7 @@ project(':spark') {
 
     configurations {
         systemTestCompile.extendsFrom testCompile
-        systemTesttRuntime.extendsFrom testRuntime
+        systemTestRuntime.extendsFrom testRuntime
     }
 
     dependencies {
