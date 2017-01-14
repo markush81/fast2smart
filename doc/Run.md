@@ -146,9 +146,14 @@ only showing top 10 rows
 
 Now we should already see plenty of *Batch Layer - Precomputed View* entries
 
+SSH into one of the analytics nodes:
+
 ```bash
-./apache-cassandra-3.9/bin/cqlsh
+lucky:fastdata-cluster markus$ vagrant ssh analytics-1
+Last login: Mon Jan  2 12:35:53 2017 from 10.0.2.2
+[vagrant@analytics-1 ~]$ cqlsh
 ```
+
 ```sql
 cqlsh> SELECT * FROM fast2smart.member_monthly_balance LIMIT 10;
 
@@ -173,10 +178,6 @@ cqlsh>
 
 but no *Speed Layer - Incremental View* enties so far.
 
-```bash
-./apache-cassandra-3.9/bin/cqlsh
-```
-
 ```sql
 cqlsh> SELECT * FROM fast2smart.member_delta_balance LIMIT 10;
 
@@ -190,26 +191,51 @@ cqlsh>
 
 #### Start Streaming
 
-In order to see now everything working, the streaming job will be started.
+In order to start the Streaming part
 
-```bash
-./fast2smart/gradlew streaming
-
-:spark:compileJava UP-TO-DATE
-:spark:compileGroovy UP-TO-DATE
-:spark:compileScala UP-TO-DATE
-:spark:processResources UP-TO-DATE
-:spark:classes UP-TO-DATE
-> Building 83% > :spark:streaming
+1. you have to copy `fast2smart/spark/build/libs/spark-0.1.0-all.jar` to `fastdata-cluster/exchange`.
+2. Next get into one of the analytics nodes
 
 ```
+cd fastdata-cluster
+lucky:fastdata-cluster markus$ vagrant ssh analytics-1
+Last login: Sat Jan 14 13:14:53 2017 from 10.0.2.2
+[vagrant@analytics-1 ~]$ 
+
+```
+Then submit the job to Spark
+
+
+```bash
+spark-submit --master spark://192.168.10.8:6066 --class net.fast2smart.streaming.PurchaseStreaming --deploy-mode cluster /vagrant/exchange/spark-0.1.0-all.jar
+
+Running Spark using the REST application submission protocol.
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
+17/01/14 13:28:18 INFO RestSubmissionClient: Submitting a request to launch an application in spark://192.168.10.8:6066.
+17/01/14 13:28:20 INFO RestSubmissionClient: Submission successfully created as driver-20170114132819-0000. Polling submission state...
+17/01/14 13:28:20 INFO RestSubmissionClient: Submitting a request for the status of submission driver-20170114132819-0000 in spark://192.168.10.8:6066.
+17/01/14 13:28:20 INFO RestSubmissionClient: State of driver driver-20170114132819-0000 is now RUNNING.
+17/01/14 13:28:20 INFO RestSubmissionClient: Driver is running on worker worker-20170114123843-192.168.10.8-44393 at 192.168.10.8:44393.
+17/01/14 13:28:20 INFO RestSubmissionClient: Server responded with CreateSubmissionResponse:
+{
+  "action" : "CreateSubmissionResponse",
+  "message" : "Driver successfully submitted as driver-20170114132819-0000",
+  "serverSparkVersion" : "2.1.0",
+  "submissionId" : "driver-20170114132819-0000",
+  "success" : true
+}
+```
+
+See if it is running: [http://192.168.10.8:8080](http://192.168.10.8:8080)
+
+![Running Streaming Job](cluster-application.png)
+
+If yes, you find more details at [http://192.168.10.8:4040](http://192.168.10.8:4040)
 
 **Note:** the streaming job will process all historic purchases as well, but since we already run once the aggregation there will be no deltas, since the cut-off is always latest purchase date (=maxdate) been in aggregation run.
 
 
-```bash
-./apache-cassandra-3.9/bin/cqlsh
-```
+Get into one of the analytics nodes again and run `cqlsh`.
 
 ```sql
 cqlsh> SELECT * FROM fast2smart.member_delta_balance LIMIT 10;
@@ -224,7 +250,6 @@ cqlsh> SELECT * FROM fast2smart.member_delta_balance LIMIT 10;
 
 ```bash
 ./fast2smart/gradlew gatlingRun-net.fast2smart.simulation.Current
-...
 ```
 
 This simulation is taking members from database and adding purchases beeing after the historic run.
@@ -234,9 +259,7 @@ This simulation is taking members from database and adding purchases beeing afte
 
 Now since we create *future* records (means after maxdate beeing aggregated), we should have several delta entries.
 
-```bash
-./apache-cassandra-3.9/bin/cqlsh
-```
+Get into one of the analytics nodes again and run `cqlsh`.
 
 ```sql
 cqlsh> SELECT * FROM fast2smart.member_delta_balance LIMIT 10;
@@ -263,7 +286,9 @@ cqlsh> SELECT * FROM fast2smart.member_delta_balance LIMIT 10;
 Let's have a look into the kafka topic `treatments`. There should be lots of treatments for all members, since now several members should have met the criteria of > 199 points in month of a purchase.
 
 ```bash
-./kafka_2.11-0.10.1.0/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic treatments --from-beginning
+lucky:fastdata-cluster markus$ vagrant ssh kafka-1
+Last login: Mon Jan  2 12:35:53 2017 from 10.0.2.2
+[vagrant@kafka-1 ~]$ kafka-console-consumer.sh --bootstrap-server kafka-1:9092 --topic treatments --from-beginning
 
 ...
 
@@ -279,11 +304,14 @@ Let's have a look into the kafka topic `treatments`. There should be lots of tre
 Another intersting thing is to see if subscriber to a topic is done with its work.
 
 ```bash
-
-./kafka_2.11-0.10.1.0/bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group purchase-streaming --describe
-
+[vagrant@kafka-1 ~]$ kafka-consumer-groups.sh --bootstrap-server kafka-1:9092 --group purchase-streaming --describe
 GROUP                          TOPIC                          PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             OWNER
-purchase-streaming             purchases                      0          14750           14750           0               consumer-1_/192.168.178.37
+purchase-streaming             purchases                      0          5499            5499            0               consumer-1_/192.168.10.8
+purchase-streaming             purchases                      1          5512            5512            0               consumer-1_/192.168.10.8
+purchase-streaming             purchases                      2          5410            5410            0               consumer-1_/192.168.10.8
+purchase-streaming             purchases                      3          5541            5541            0               consumer-1_/192.168.10.8
+purchase-streaming             purchases                      4          5628            5628            0               consumer-1_/192.168.10.8
+purchase-streaming             purchases                      5          5478            5478            0               consumer-1_/192.168.10.8
 ```
 
 A *LAG* of 0 indicates that all records have been processed already. `purchase-streaming` is the subscriber in Streaming job.

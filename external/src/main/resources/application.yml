@@ -1,5 +1,7 @@
 brokers:
-  - localhost:9092
+  - 192.168.10.5:9092
+  - 192.168.10.6:9092
+  - 192.168.10.7:9092
 producer:
   key.serializer: org.apache.kafka.common.serialization.LongSerializer
   value.serializer: org.apache.kafka.common.serialization.StringSerializer

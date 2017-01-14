@@ -77,7 +77,7 @@ project(':external') {
         compile 'org.springframework.boot:spring-boot-starter-web'
         compile 'org.springframework.boot:spring-boot-starter-hateoas'
         compile 'org.springframework.boot:spring-boot-starter-actuator'
-        compile 'org.springframework.kafka:spring-kafka:1.1.1.RELEASE'
+        compile 'org.springframework.kafka:spring-kafka:1.1.2.RELEASE'
         compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.+'
         //devtools
         compile 'org.springframework.boot:spring-boot-devtools'
@@ -86,7 +86,7 @@ project(':external') {
 
         //testing
         testCompile 'org.springframework.boot:spring-boot-starter-test'
-        testCompile ('org.springframework.kafka:spring-kafka-test:1.1.1.RELEASE') {
+        testCompile ('org.springframework.kafka:spring-kafka-test:1.1.2.RELEASE') {
             exclude module: 'log4j'
         }
         testCompile 'com.jayway.jsonpath:json-path-assert:2.2.0'
@@ -179,11 +179,6 @@ project(':spark') {
 
     task aggregation(type:JavaExec) {
         main = 'net.fast2smart.batch.AccountAggregation'
-        classpath = sourceSets.main.runtimeClasspath
-    }
-
-    task streaming(type:JavaExec) {
-        main = 'net.fast2smart.streaming.PurchaseStreaming'
         classpath = sourceSets.main.runtimeClasspath
     }
 
