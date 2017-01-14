@@ -285,10 +285,19 @@ cqlsh> SELECT * FROM fast2smart.member_delta_balance LIMIT 10;
 
 Let's have a look into the kafka topic `treatments`. There should be lots of treatments for all members, since now several members should have met the criteria of > 199 points in month of a purchase.
 
+SSH into one of the kafka nodes:
+
 ```bash
 lucky:fastdata-cluster markus$ vagrant ssh kafka-1
 Last login: Mon Jan  2 12:35:53 2017 from 10.0.2.2
-[vagrant@kafka-1 ~]$ kafka-console-consumer.sh --bootstrap-server kafka-1:9092 --topic treatments --from-beginning
+[vagrant@kafka-1 ~]$
+```
+
+Create a console consumer to retrieve messages:
+
+```
+
+kafka-console-consumer.sh --bootstrap-server kafka-1:9092 --topic treatments --from-beginning
 
 ...
 
@@ -301,7 +310,7 @@ Last login: Mon Jan  2 12:35:53 2017 from 10.0.2.2
 ...
 ```
 
-Another intersting thing is to see if subscriber to a topic is done with its work.
+Another interseting thing is to see if subscriber to a topic is done with its work.
 
 ```bash
 [vagrant@kafka-1 ~]$ kafka-consumer-groups.sh --bootstrap-server kafka-1:9092 --group purchase-streaming --describe
