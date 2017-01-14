@@ -2,7 +2,7 @@
 
 You need to install the following applications:
 
-- [Apache Kafka (0.10.1.0)](https://www.apache.org/dyn/closer.cgi?path=/kafka/0.10.1.0/kafka_2.11-0.10.1.0.tgz)
+- [Apache Kafka (0.10.1.1)](https://www.apache.org/dyn/closer.cgi?path=/kafka/0.10.1.1/kafka_2.11-0.10.1.1.tgz)
 - [Apache Cassandra (3.9)](http://www.apache.org/dyn/closer.lua/cassandra/3.9/apache-cassandra-3.9-bin.tar.gz)
 - Clone [fast2smart](https://github.com/markush81/fast2smart) repository
 
@@ -11,14 +11,14 @@ You need to install the following applications:
 Extract:
 
 ```
-tar -xzf kafka_2.11-0.10.1.0.tgz
+tar -xzf kafka_2.11-0.10.1.1.tgz
 ```
 
 Run:
 
 
 ```
-cd kafka_2.11-0.10.1.0
+cd kafka_2.11-0.10.1.1
 bin/zookeeper-server-start.sh config/zookeeper.properties
 bin/kafka-server-start.sh config/server.properties
 ```
@@ -49,14 +49,14 @@ git clone https://github.com/markush81/fast2smart
 For further steps following directory layout is assumed:
 
 ```bash
-kafka_2.11-0.10.1.0
+kafka_2.11-0.10.1.1
 apache-cassandra-3.9
 fast2smart
 ```
 
 #### Apache Kafka
 
-There is no need to do anything, because the needed topics will be autocreated. Change into `kafka_2.11-0.10.1.0`.
+There is no need to do anything, because the needed topics will be autocreated. Change into `kafka_2.11-0.10.1.1`.
 
 If you like to do this manually
 
