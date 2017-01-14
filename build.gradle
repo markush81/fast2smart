@@ -3,13 +3,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.2.RELEASE'
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.3.RELEASE'
     }
 }
 
 plugins {
     id 'org.sonarqube' version '2.2.1'
     id 'com.github.lkishalmi.gatling' version '0.4.1' apply false
+    id 'com.github.johnrengelman.shadow' version '1.2.4' apply false
 }
 
 sonarqube {
@@ -114,16 +115,21 @@ project(':external') {
 
 project(':legacy') {
     dependencies {
-        compile 'org.springframework.boot:spring-boot-starter-data-jpa:1.4.2.RELEASE'
+        compile 'org.springframework.boot:spring-boot-starter-data-jpa:1.4.3.RELEASE'
     }
 }
 
 project(':spark') {
     apply plugin: 'scala'
     apply plugin: 'groovy'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
     sourceSets {
+        spark
         systemTest
+        main {
+            compileClasspath = compileClasspath + configurations.sparkCompileClasspath
+        }
     }
 
     configurations {
@@ -138,27 +144,27 @@ project(':spark') {
         compile 'org.codehaus.groovy:groovy-all:2.4.+'
 
         //spark
-        compile('org.apache.spark:spark-core_2.11:2.0.2') {
+        compile('org.apache.spark:spark-core_2.11:2.1.0') {
             exclude module: 'slf4j-log4j12'
         }
-        compile('org.apache.spark:spark-sql_2.11:2.0.2') {
+        compile('org.apache.spark:spark-sql_2.11:2.1.0') {
             exclude module: 'slf4j-log4j12'
         }
-        compile('org.apache.spark:spark-streaming_2.11:2.0.2') {
+        compile('org.apache.spark:spark-streaming_2.11:2.1.0') {
             exclude module: 'slf4j-log4j12'
         }
-        compile('org.apache.spark:spark-streaming-kafka-0-10_2.11:2.0.2') {
+        sparkCompile('org.apache.spark:spark-streaming-kafka-0-10_2.11:2.1.0') {
             exclude module: 'slf4j-log4j12'
         }
         //json
-        compile 'org.json4s:json4s-native_2.11:3.2.11'
-        compile 'org.json4s:json4s-jackson_2.11:3.2.11'
+        sparkCompile 'org.json4s:json4s-native_2.11:3.2.11'
+        sparkCompile 'org.json4s:json4s-jackson_2.11:3.2.11'
         //cassandra
-        compile('com.datastax.spark:spark-cassandra-connector_2.11:2.0.0-M3') {
+        sparkCompile('com.datastax.spark:spark-cassandra-connector_2.11:2.0.0-M3') {
             exclude module: 'slf4j-log4j12'
         }
         //database
-        compile 'com.h2database:h2:1.4.193'
+        sparkCompile 'com.h2database:h2:1.4.193'
 
         testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
         testCompile('com.athaydes:spock-reports:1.2.+' ) {
@@ -179,18 +185,19 @@ project(':spark') {
         main = 'net.fast2smart.streaming.PurchaseStreaming'
         classpath = sourceSets.main.runtimeClasspath
     }
+
+    shadowJar {
+        configurations = [project.configurations.sparkCompile]
+    }
+
+    build.dependsOn shadowJar
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.2.1'
-    distributionUrl = 'https://services.gradle.org/distributions/gradle-3.2.1-all.zip'
+    gradleVersion = '3.3'
+    distributionUrl = 'https://services.gradle.org/distributions/gradle-3.3-all.zip'
 }
 
 idea {
     targetVersion = '16'
-    //IDEA fix
-    ScalaCompileOptions.metaClass.daemonServer = true
-    ScalaCompileOptions.metaClass.fork = true
-    ScalaCompileOptions.metaClass.useAnt = false
-    ScalaCompileOptions.metaClass.useCompileDaemon = false
 }
