@@ -129,6 +129,7 @@ project(':spark') {
         systemTest
         main {
             compileClasspath = compileClasspath + configurations.sparkCompileClasspath
+            runtimeClasspath = runtimeClasspath + configurations.sparkCompileClasspath
         }
     }
 
