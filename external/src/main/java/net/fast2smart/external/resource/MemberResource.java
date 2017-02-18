@@ -6,7 +6,6 @@ import com.google.common.collect.Lists;
 import net.fast2smart.external.model.ExternalMember;
 import net.fast2smart.legacy.model.Member;
 import net.fast2smart.legacy.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +22,15 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping
 class MemberResource {
 
-    @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
     private KafkaTemplate<Long, String> kafkaTemplate;
-    @Autowired
     private MemberService memberService;
+
+    public MemberResource(ObjectMapper objectMapper, KafkaTemplate<Long, String> kafkaTemplate, MemberService memberService) {
+        this.objectMapper = objectMapper;
+        this.kafkaTemplate = kafkaTemplate;
+        this.memberService = memberService;
+    }
 
     @RequestMapping(path = "/members", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ExternalMember> create(@RequestBody ExternalMember externalMember) throws JsonProcessingException {

@@ -3,7 +3,6 @@ package net.fast2smart.external.resource;
 import net.fast2smart.external.model.AccountStatement;
 import net.fast2smart.legacy.model.Account;
 import net.fast2smart.legacy.service.AccountService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +18,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping
 class AccountResource {
 
-    @Autowired
-    private AccountService accountService;
+    private final AccountService accountService;
+
+    public AccountResource(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @RequestMapping(path = {"/members/{cardnumber}/account"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AccountStatement> get(@PathVariable Long cardnumber) {

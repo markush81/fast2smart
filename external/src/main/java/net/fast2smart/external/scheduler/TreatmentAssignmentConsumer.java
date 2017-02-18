@@ -14,7 +14,6 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,14 +34,17 @@ public class TreatmentAssignmentConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreatmentAssignmentConsumer.class);
 
-    @Autowired
     private Consumer<Long, String> kafkaConsumer;
-    @Autowired
     private TreatmentService treatmentService;
-    @Autowired
     private MemberService memberService;
-    @Autowired
     private ObjectMapper objectMapper;
+
+    public TreatmentAssignmentConsumer(Consumer<Long, String> kafkaConsumer, TreatmentService treatmentService, MemberService memberService, ObjectMapper objectMapper) {
+        this.kafkaConsumer = kafkaConsumer;
+        this.treatmentService = treatmentService;
+        this.memberService = memberService;
+        this.objectMapper = objectMapper;
+    }
 
     @Scheduled(initialDelay = 0, fixedDelay = 500L)
     @SuppressWarnings({"squid:S1166"})

@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import net.fast2smart.external.model.ExternalTreatment;
 import net.fast2smart.legacy.model.Treatment;
 import net.fast2smart.legacy.service.TreatmentService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,8 +21,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping
 class TreatmentResource {
 
-    @Autowired
     private TreatmentService treatmentService;
+
+    public TreatmentResource(TreatmentService treatmentService) {
+        this.treatmentService = treatmentService;
+    }
 
     @RequestMapping(path = {"/members/{cardnumber}/treatments"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<ExternalTreatment>> get(@PathVariable Long cardnumber) {

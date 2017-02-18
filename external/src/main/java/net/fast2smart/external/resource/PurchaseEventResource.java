@@ -10,7 +10,6 @@ import net.fast2smart.legacy.service.AccountService;
 import net.fast2smart.legacy.service.MemberService;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +24,17 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping
 class PurchaseEventResource {
 
-    @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
     private Producer<Long, String> kafkaProducer;
-    @Autowired
     private AccountService accountService;
-    @Autowired
     private MemberService memberService;
+
+    public PurchaseEventResource(ObjectMapper objectMapper, Producer<Long, String> kafkaProducer, AccountService accountService, MemberService memberService) {
+        this.objectMapper = objectMapper;
+        this.kafkaProducer = kafkaProducer;
+        this.accountService = accountService;
+        this.memberService = memberService;
+    }
 
     @RequestMapping(path = "/purchases", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<PurchaseEvent> create(@RequestBody PurchaseEvent purchaseEvent) throws JsonProcessingException {

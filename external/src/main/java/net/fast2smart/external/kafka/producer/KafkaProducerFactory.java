@@ -1,9 +1,8 @@
 package net.fast2smart.external.kafka.producer;
 
-import net.fast2smart.external.config.ApplicationConfiguration;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -15,8 +14,17 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerFactory<K, V> {
 
-    @Autowired
-    private ApplicationConfiguration configuration;
+    private final KafkaProperties kafkaProperties;
+
+    public KafkaProducerFactory(KafkaProperties kafkaProperties) {
+        this.kafkaProperties = kafkaProperties;
+    }
+
+    @Bean
+    @SuppressWarnings("WeakerAccess")
+    protected Map<String, Object> producerConfigs() {
+        return kafkaProperties.buildProducerProperties();
+    }
 
     @Bean
     @SuppressWarnings("WeakerAccess")
@@ -25,26 +33,10 @@ public class KafkaProducerFactory<K, V> {
     }
 
     @Bean
-    @SuppressWarnings("WeakerAccess")
-    protected Map<String, Object> producerConfigs() {
-        return configuration.getProducerProperties();
-    }
-
-    /**
-     * Using spring-kafka
-     *
-     * @return KafkaTemplate
-     */
-    @Bean
     public KafkaTemplate<K, V> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
-    /**
-     * Standardway, just create a new instance
-     *
-     * @return KafkaProducer
-     */
     @Bean
     public Producer<K, V> kafkaProducer() {
         return new KafkaProducer<>(producerConfigs());

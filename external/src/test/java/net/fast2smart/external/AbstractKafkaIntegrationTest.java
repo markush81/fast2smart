@@ -1,6 +1,5 @@
 package net.fast2smart.external;
 
-import net.fast2smart.external.config.ApplicationConfiguration;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
@@ -11,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -63,18 +63,18 @@ public class AbstractKafkaIntegrationTest {
     public static class TestApplicationConfiguration {
 
         @Autowired
-        private ApplicationConfiguration applicationConfigurationn;
+        private KafkaProperties kafkaProperties;
 
         @Bean
         public Map<String, Object> producerConfigs() {
-            Map<String, Object> producerConfigs = applicationConfigurationn.getProducerProperties();
+            Map<String, Object> producerConfigs = kafkaProperties.buildProducerProperties();
             producerConfigs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaTestUtils.producerProps(embeddedKafka).get(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG));
             return producerConfigs;
         }
 
         @Bean
         public Map<String, Object> consumerConfigs() {
-            Map<String, Object> consumerConfigs = applicationConfigurationn.getConsumerProperties();
+            Map<String, Object> consumerConfigs = kafkaProperties.buildConsumerProperties();
             consumerConfigs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaTestUtils.producerProps(embeddedKafka).get(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG));
             consumerConfigs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OffsetResetStrategy.EARLIEST.name().toLowerCase()); //this is specifically for test, because test might have produced record before consumer is ready
             return consumerConfigs;

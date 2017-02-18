@@ -1,18 +1,18 @@
-brokers:
-  - 192.168.10.5:9092
-  - 192.168.10.6:9092
-  - 192.168.10.7:9092
-producer:
-  key.serializer: org.apache.kafka.common.serialization.LongSerializer
-  value.serializer: org.apache.kafka.common.serialization.StringSerializer
-consumer:
-  key.deserializer: org.apache.kafka.common.serialization.LongDeserializer
-  value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  enable.auto.commit: off
-  group.id: fast2smart
-
-
 spring:
+  kafka:
+    bootstrap-servers:
+      - 192.168.10.5:9092
+      - 192.168.10.6:9092
+      - 192.168.10.7:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      enable-auto-commit: false
+      group-id: fast2smart
+
   jackson.serialization:
     fail_on_empty_beans: false
     indent_output: true

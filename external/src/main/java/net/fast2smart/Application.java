@@ -1,4 +1,4 @@
-package net.fast2smart.external;
+package net.fast2smart;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 /**
  * Created by markus on 22/10/2016.
  */
-@SpringBootApplication(scanBasePackages = {"net.fast2smart"})
+@SpringBootApplication
 @SuppressWarnings({"squid:S1118"})
 public class Application {
 
