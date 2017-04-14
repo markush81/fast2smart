@@ -5,7 +5,9 @@ sudo: false
 install: true
 
 addons:
-  sonarqube: true
+  sonarqube:
+    organization: "markush81-github"
+
 env:
   global:
     secure: "DBwwQ0kGt6xlJPVRNFbE+7c+dp/U/NAQ2EE8WaTWKyTRhfHDUf7JdsQISGGiGXleEpeFJY6R5HkJ8UcctkUcxJgD+pOLF7wK513Y+X0sI6w0E26xs8fpZf2MPd+gRy7QYxh4/8euCTcpxMFShFmB4rQhm6FVsV34L34lOCO/QRVK0vhxZ6eaR4ysQhD6BWB+b/3rUBR/sG5gNs7vvLtQ+K5Z+zK3zk9TPPqNAQ42+pI7VZC5by7FMzsZNQiP7PAfrzqnZpTqrBy+LHdXHesclMavFbmvKg+B1/BQAKr5lkQJUWBQbQh94zbESeH6lymBhDGvSHsP94SsmdYpdIbAqDgceq3VPeM0Yi8M9QpbKQbft/5u+DnXoFLn1vhGWiiZeth+YxDzk4P8Tnils6+KV2MKjMaL4ah8OMViS/Sgofk2rHMJQeC58AaStBhRiP/+TtEvzxUxunMqbgzcF5KZVbtIpmQ2QyIJ/qpLmkBXcZu4GUSl7gA+4duGn9bKUvAfFD6o+7VWKNmyTSDv4H7u7jsffFWs+47rsXDw33I6osPY255TKaMb1lLLrECuQ+9n2r90C3kjUkZgslNOlkP2XIni14nk0mos54kQA3EZrHzvgm9iu6bTNs40iB/dmaqCSGdlceAH1Y96wd2Jh843ryzhMoKW4WugClMU7PoHZSE="
