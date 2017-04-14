@@ -207,15 +207,15 @@ Then submit the job to Spark
 
 
 ```bash
-spark-submit --master spark://192.168.10.8:6066 --class net.fast2smart.streaming.PurchaseStreaming --deploy-mode cluster /vagrant/exchange/spark-0.1.0-all.jar
+spark-submit --master spark://192.168.10.11:6066 --class net.fast2smart.streaming.PurchaseStreaming --deploy-mode cluster /vagrant/exchange/spark-0.1.0-all.jar
 
 Running Spark using the REST application submission protocol.
 Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
-17/01/14 13:28:18 INFO RestSubmissionClient: Submitting a request to launch an application in spark://192.168.10.8:6066.
+17/01/14 13:28:18 INFO RestSubmissionClient: Submitting a request to launch an application in spark://192.168.10.11:6066.
 17/01/14 13:28:20 INFO RestSubmissionClient: Submission successfully created as driver-20170114132819-0000. Polling submission state...
-17/01/14 13:28:20 INFO RestSubmissionClient: Submitting a request for the status of submission driver-20170114132819-0000 in spark://192.168.10.8:6066.
+17/01/14 13:28:20 INFO RestSubmissionClient: Submitting a request for the status of submission driver-20170114132819-0000 in spark://192.168.10.11:6066.
 17/01/14 13:28:20 INFO RestSubmissionClient: State of driver driver-20170114132819-0000 is now RUNNING.
-17/01/14 13:28:20 INFO RestSubmissionClient: Driver is running on worker worker-20170114123843-192.168.10.8-44393 at 192.168.10.8:44393.
+17/01/14 13:28:20 INFO RestSubmissionClient: Driver is running on worker worker-20170114123843-192.168.10.8-44393 at 192.168.10.11:44393.
 17/01/14 13:28:20 INFO RestSubmissionClient: Server responded with CreateSubmissionResponse:
 {
   "action" : "CreateSubmissionResponse",
@@ -226,11 +226,11 @@ Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
 }
 ```
 
-See if it is running: [http://192.168.10.8:8080](http://192.168.10.8:8080)
+See if it is running: [http://192.168.10.11:8080](http://192.168.10.11:8080)
 
 ![Running Streaming Job](cluster-application.png)
 
-If yes, you find more details at [http://192.168.10.8:4040](http://192.168.10.8:4040)
+If yes, you find more details at [http://192.168.10.11:4040](http://192.168.10.11:4040)
 
 **Note:** the streaming job will process all historic purchases as well, but since we already run once the aggregation there will be no deltas, since the cut-off is always latest purchase date (=maxdate) been in aggregation run.
 
