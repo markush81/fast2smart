@@ -66,6 +66,7 @@ subprojects {
 project(':external') {
     apply plugin: 'org.springframework.boot'
     apply plugin: 'scala'
+    apply plugin: 'jacoco'
     apply plugin: 'com.github.lkishalmi.gatling'
 
     dependencies {
