@@ -1,6 +1,6 @@
 ## Install 
 
-- Install [FastData-Cluster](https://github.com/markush81/fastdata-cluster)
+- Install [FastData-Cluster](https://github.com/markush81/fastdata-cluster/tree/spark-cluster)
   - if you want to use local only see [here](https://github.com/markush81/fast2smart/tree/run-local).
 - Clone [fast2smart](https://github.com/markush81/fast2smart) repository
 
