@@ -6,7 +6,7 @@
 
 #### Fast Data Cluster
 
-Follow instructions [here](https://github.com/markush81/fastdata-cluster/blob/master/README.md).
+Follow instructions [here](https://github.com/markush81/fastdata-cluster/blob/spark-cluster/README.md).
 
 #### Clone fast2smart repository
 
