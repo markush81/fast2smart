@@ -15,7 +15,7 @@ object AccountAggregation {
       .builder
       .appName("Account Aggregation")
       .master("local[2]")
-      .config("spark.cassandra.connection.host", "192.168.10.8,192.168.10.9,192.168.10.10")
+      .config("spark.cassandra.connection.host", "192.168.10.5,192.168.10.6,192.168.10.7")
       .getOrCreate()
 
     import spark.implicits._

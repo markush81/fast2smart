@@ -35,7 +35,7 @@ object PurchaseStreaming {
       .builder
       .appName("Purchase Streaming")
       .config("spark.streaming.stopGracefullyOnShutdown", "true")
-      .config("spark.cassandra.connection.host", "192.168.10.8,192.168.10.9,192.168.10.10")
+      .config("spark.cassandra.connection.host", "192.168.10.5,192.168.10.6,192.168.10.7")
       .getOrCreate()
 
     //create streaming context with a window size of 1s, so every second it evaluates new data from underlying stream
@@ -43,7 +43,7 @@ object PurchaseStreaming {
 
     //create KafkaStream for topic purchase
     val kafkaParams = Map[String, Object](
-      "bootstrap.servers" -> "192.168.10.5:9092,192.168.10.6:9092,192.168.10.7:9092",
+      "bootstrap.servers" -> "192.168.10.2:9092,192.168.10.3:9092,192.168.10.4:9092",
       "key.deserializer" -> classOf[LongDeserializer],
       "value.deserializer" -> classOf[StringDeserializer],
       "group.id" -> "purchase-streaming",

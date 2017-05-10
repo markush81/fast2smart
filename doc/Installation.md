@@ -1,6 +1,6 @@
 ## Install 
 
-- Install [FastData-Cluster](https://github.com/markush81/fastdata-cluster/tree/spark-cluster)
+- Install [FastData-Cluster](https://github.com/markush81/fastdata-cluster/)
   - if you want to use local only see [here](https://github.com/markush81/fast2smart/tree/run-local).
 - Clone [fast2smart](https://github.com/markush81/fast2smart) repository
 
@@ -63,9 +63,9 @@ Topic:enrolments	PartitionCount:6	ReplicationFactor:2	Configs:
 2. SSH into one of the analytics nodes:
 
 ```bash
-lucky:fastdata-cluster markus$ vagrant ssh analytics-1
+lucky:fastdata-cluster markus$ vagrant ssh cassandra-1
 Last login: Mon Jan  2 12:35:53 2017 from 10.0.2.2
-[vagrant@analytics-1 ~]$ 
+[vagrant@cassandra-1 ~]$ 
 ```
 
 Execute both scripts:
@@ -79,7 +79,7 @@ cqlsh -f /vagrant/exchange/01_create_tables.cql
 Check if everything has been done right:
 
 ```bash
-[vagrant@analytics-1 ~]$ cqlsh -e "DESCRIBE KEYSPACE fast2smart;"
+[vagrant@cassandra-1 ~]$ cqlsh -e "DESCRIBE KEYSPACE fast2smart;"
 
 CREATE KEYSPACE fast2smart WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'}  AND durable_writes = true;
 

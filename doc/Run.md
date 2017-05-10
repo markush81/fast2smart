@@ -99,7 +99,7 @@ This simulation is creating members (in this run it did 3707) which already purc
 
 #### Batch Aggregation
 
-Now let's run our aggregation job.
+Now let's run our aggregation job (we use Spark in embedded local mode here, instead of submitting to the cluster).
 
 
 ```bash
@@ -149,9 +149,9 @@ Now we should already see plenty of *Batch Layer - Precomputed View* entries
 SSH into one of the analytics nodes:
 
 ```bash
-lucky:fastdata-cluster markus$ vagrant ssh analytics-1
+lucky:fastdata-cluster markus$ vagrant ssh cassandra-1
 Last login: Mon Jan  2 12:35:53 2017 from 10.0.2.2
-[vagrant@analytics-1 ~]$ cqlsh
+[vagrant@cassandra-1 ~]$ cqlsh
 ```
 
 ```sql
@@ -194,43 +194,18 @@ cqlsh>
 In order to start the Streaming part
 
 1. you have to copy `fast2smart/spark/build/libs/spark-0.1.0-all.jar` to `fastdata-cluster/exchange`.
-2. Next get into one of the analytics nodes
-
-```
-cd fastdata-cluster
-lucky:fastdata-cluster markus$ vagrant ssh analytics-1
-Last login: Sat Jan 14 13:14:53 2017 from 10.0.2.2
-[vagrant@analytics-1 ~]$ 
-
-```
-Then submit the job to Spark
-
+2. Next get into one of the hadoop nodes and submit the job to Spark
 
 ```bash
-spark-submit --master spark://192.168.10.11:6066 --class net.fast2smart.streaming.PurchaseStreaming --deploy-mode cluster /vagrant/exchange/spark-0.1.0-all.jar
+lucky:fastdata-cluster markus$ vagrant ssh hadoop-1
+Last login: Sat Jan 14 13:14:53 2017 from 10.0.2.2
+[vagrant@hadoop-1 ~]$ spark-submit --master yarn --class net.fast2smart.streaming.PurchaseStreaming --conf spark.yarn.submit.waitAppCompletion=false --deploy-mode cluster --executor-memory 1G --num-executors 3  /vagrant/exchange/spark-0.1.0-all.jar
 
-Running Spark using the REST application submission protocol.
-Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
-17/01/14 13:28:18 INFO RestSubmissionClient: Submitting a request to launch an application in spark://192.168.10.11:6066.
-17/01/14 13:28:20 INFO RestSubmissionClient: Submission successfully created as driver-20170114132819-0000. Polling submission state...
-17/01/14 13:28:20 INFO RestSubmissionClient: Submitting a request for the status of submission driver-20170114132819-0000 in spark://192.168.10.11:6066.
-17/01/14 13:28:20 INFO RestSubmissionClient: State of driver driver-20170114132819-0000 is now RUNNING.
-17/01/14 13:28:20 INFO RestSubmissionClient: Driver is running on worker worker-20170114123843-192.168.10.8-44393 at 192.168.10.11:44393.
-17/01/14 13:28:20 INFO RestSubmissionClient: Server responded with CreateSubmissionResponse:
-{
-  "action" : "CreateSubmissionResponse",
-  "message" : "Driver successfully submitted as driver-20170114132819-0000",
-  "serverSparkVersion" : "2.1.0",
-  "submissionId" : "driver-20170114132819-0000",
-  "success" : true
-}
 ```
 
-See if it is running: [http://192.168.10.11:8080](http://192.168.10.11:8080)
+See if it is running: [http://hadoop-1:8080](http://hadoop-1:8080)
 
-![Running Streaming Job](cluster-application.png)
-
-If yes, you find more details at [http://192.168.10.11:4040](http://192.168.10.11:4040)
+Navigate to Application Master UI (check the application in RUNNING state and on the right side click Application Master), e.g. [http://hadoop-1:8088/proxy/application_1492940607011_0001](http://hadoop-1:8088/proxy/application_1492940607011_0001).
 
 **Note:** the streaming job will process all historic purchases as well, but since we already run once the aggregation there will be no deltas, since the cut-off is always latest purchase date (=maxdate) been in aggregation run.
 

@@ -15,11 +15,11 @@ The basic idea is: `query = function(all data)` where `all data` is `precomputed
 
 The choosen technologies are: 
 
-- [Apache Kafka (0.10.1.1)](http://kafka.apache.org/0101/documentation.html)
-- [Apache Spark (2.1.0)](http://spark.apache.org/docs/2.1.0/) and [Streaming (2.1.0)](http://spark.apache.org/docs/2.1.0/streaming-programming-guide.html) with [Kafka Integration (010)](http://spark.apache.org/docs/2.1.0/streaming-kafka-0-10-integration.html)
-- [Apache Cassandra (3.9)](http://cassandra.apache.org/doc/3.9/)
+- [Apache Kafka (0.10.2.0)](http://kafka.apache.org/0102/documentation.html)
+- [Apache Spark (2.1.1)](http://spark.apache.org/docs/2.1.1/) and [Streaming (2.1.1)](http://spark.apache.org/docs/2.1.1/streaming-programming-guide.html) with [Kafka Integration (010)](http://spark.apache.org/docs/2.1.1/streaming-kafka-0-10-integration.html)
+- [Apache Cassandra (3.10)](http://cassandra.apache.org/doc/)
 
-Beside those there is [Springboot (1.5.1)](http://docs.spring.io/spring-boot/docs/1.5.1.RELEASE/reference/htmlsingle/) used as service implementation.
+Beside those there is [Springboot (1.5.3)](http://docs.spring.io/spring-boot/docs/1.5.3.RELEASE/reference/htmlsingle/) used as service implementation.
 
 Why this techologies? Let's say, they are currently on-the-rise. Of course there are a lot of alternatives, just google.
 
