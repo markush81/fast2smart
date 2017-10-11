@@ -13,6 +13,8 @@ spring:
       enable-auto-commit: false
       group-id: fast2smart
 
+  mvc.servlet.load-on-startup: 1
+
   jackson.serialization:
     fail_on_empty_beans: false
     indent_output: true

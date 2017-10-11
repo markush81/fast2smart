@@ -1,2 +1,2 @@
 rootProject.name = 'fast2smart'
-include 'spark', 'legacy', 'external'
+include 'spark', 'legacy', 'external', 'flink'

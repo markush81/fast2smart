@@ -39,15 +39,15 @@ Last login: Mon Jan  2 12:35:53 2017 from 10.0.2.2
 Create all topics:
 
 ```
-kafka-topics.sh --create --zookeeper zookeeper-1:2181 --replication-factor 2 --partitions 6 --topic enrolments
-kafka-topics.sh --create --zookeeper zookeeper-1:2181 --replication-factor 2 --partitions 6 --topic purchases 
-kafka-topics.sh --create --zookeeper zookeeper-1:2181 --replication-factor 2 --partitions 6 --topic treatments  
+kafka-topics.sh --create --zookeeper kafka-1:2181 --replication-factor 2 --partitions 6 --topic enrolments
+kafka-topics.sh --create --zookeeper kafka-1:2181 --replication-factor 2 --partitions 6 --topic purchases 
+kafka-topics.sh --create --zookeeper kafka-1:2181 --replication-factor 2 --partitions 6 --topic treatments  
 ```
 
 Check if topics have been created correctly:
 
 ```
-[vagrant@kafka-1 ~]$ kafka-topics.sh --zookeeper zookeeper-1:2181 --describe --topic enrolments
+[vagrant@kafka-1 ~]$ kafka-topics.sh --zookeeper kafka-1:2181 --describe --topic enrolments
 Topic:enrolments	PartitionCount:6	ReplicationFactor:2	Configs:
 	Topic: enrolments	Partition: 0	Leader: 2	Replicas: 2,3	Isr: 2,3
 	Topic: enrolments	Partition: 1	Leader: 3	Replicas: 3,1	Isr: 3,1

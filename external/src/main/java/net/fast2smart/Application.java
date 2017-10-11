@@ -1,12 +1,7 @@
 package net.fast2smart;
 
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
-import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
-import org.springframework.context.annotation.Bean;
 
 /**
  * Created by markus on 22/10/2016.
@@ -15,17 +10,8 @@ import org.springframework.context.annotation.Bean;
 @SuppressWarnings({"squid:S1118"})
 public class Application {
 
-    @Bean
-    @ConditionalOnMissingClass(value = "org.springframework.boot.test.context.SpringBootTest")
-    public static BeanFactoryPostProcessor initializeDispatcherServlet() {
-        return beanFactory -> {
-            BeanDefinition bean = beanFactory.getBeanDefinition(DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME);
-            bean.getPropertyValues().add("loadOnStartup", 1);
-        };
-    }
-
     @SuppressWarnings({"squid:S2095"})
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 }

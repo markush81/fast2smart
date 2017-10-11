@@ -5,10 +5,13 @@ import java.sql.Timestamp
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId}
 import java.util.Date
+import java.util.concurrent.{Executors, TimeUnit}
 
 import com.datastax.spark.connector.rdd.CassandraLeftJoinRDD
 import com.datastax.spark.connector.types.TypeConverter
 import com.datastax.spark.connector.{CassandraRow, SomeColumns, _}
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.apache.kafka.common.serialization.{LongDeserializer, LongSerializer, StringDeserializer, StringSerializer}
 import org.apache.spark.rdd.RDD
@@ -22,6 +25,7 @@ import org.json4s.jackson.JsonMethods._
 import org.json4s.native.Serialization.write
 
 import scala.collection.mutable
+import scala.reflect.runtime.universe
 import scala.reflect.runtime.universe.typeTag
 import scala.util.{Failure, Success}
 
@@ -29,34 +33,54 @@ import scala.util.{Failure, Success}
   * Created by markus on 06/11/2016.
   */
 object PurchaseStreaming {
+  val jobName: String = "PurchaseStreaming"
+
   def main(args: Array[String]): Unit = {
+
 
     val spark = SparkSession
       .builder
-      .appName("Purchase Streaming")
+      .appName(jobName)
       .config("spark.streaming.stopGracefullyOnShutdown", "true")
-      .config("spark.cassandra.connection.host", "192.168.10.5,192.168.10.6,192.168.10.7")
+      .config("spark.streaming.kafka.maxRatePerPartition", "800")
+      .config("spark.executor.instances", "3")
+      //      .config("spark.shuffle.service.enabled", "true")
+      //      .config("spark.dynamicAllocation.enabled", "true")
+      //      .config("spark.dynamicAllocation.minExecutors", "2")
+      //      .config("spark.dynamicAllocation.maxExecutors", "4")
+      .config("spark.cassandra.connection.host", "cassandra-1,cassandra-2,cassandra-3")
       .getOrCreate()
 
     //create streaming context with a window size of 1s, so every second it evaluates new data from underlying stream
     val ssc = new StreamingContext(spark.sparkContext, Seconds(1))
 
-    //create KafkaStream for topic purchase
+    //Shutdown Hook for YARN
+    Executors
+      .newScheduledThreadPool(1)
+      .scheduleWithFixedDelay(new Runnable {
+        val fs: FileSystem = FileSystem.get(new Configuration())
+
+        override def run(): Unit = {
+          if (!fs.exists(new Path(s"/tmp/$jobName.running"))) {
+            ssc.stop(stopSparkContext = true, stopGracefully = true)
+          }
+        }
+      }, 5, 5, TimeUnit.SECONDS)
+
+    //create KafkaStream for topic purchases
     val kafkaParams = Map[String, Object](
-      "bootstrap.servers" -> "192.168.10.2:9092,192.168.10.3:9092,192.168.10.4:9092",
+      "bootstrap.servers" -> "kafka-1:9092,kafka-2:9092,kafka-3:9092",
       "key.deserializer" -> classOf[LongDeserializer],
       "value.deserializer" -> classOf[StringDeserializer],
-      "group.id" -> "purchase-streaming",
-      "auto.offset.reset" -> "earliest",
-      "enable.auto.commit" -> (false: java.lang.Boolean)
+      "group.id" -> "purchase-streaming-spark"
     )
 
     val kafkaStream = KafkaUtils.createDirectStream[String, String](ssc, PreferConsistent, Subscribe[String, String](Seq("purchases"), kafkaParams))
 
-    implicit val localDateTimeTypeConverter = new TypeConverter[LocalDateTime] {
-      def targetTypeTag = typeTag[LocalDateTime]
+    implicit val localDateTimeTypeConverter: TypeConverter[LocalDateTime] = new TypeConverter[LocalDateTime] {
+      def targetTypeTag: universe.TypeTag[LocalDateTime] = typeTag[LocalDateTime]
 
-      def convertPF = {
+      def convertPF: PartialFunction[Any, LocalDateTime] = {
         case x: String => LocalDateTime.parse(x, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         case x: Date => LocalDateTime.ofInstant(x.toInstant, ZoneId.systemDefault())
       }
@@ -69,7 +93,7 @@ object PurchaseStreaming {
       //Join current known account balance from batch process to have cut-off maxdate
       val joinWithCassandraTable: CassandraLeftJoinRDD[(Long, Int, Int, Purchase), CassandraRow] = rdd
         .map(record => {
-          implicit val formats = DefaultFormats + new LocalDateTimeSerializer
+          implicit val formats: Formats = DefaultFormats + new LocalDateTimeSerializer
           parse(record.value()).extract[Purchase]
         })
         .map(purchase => {
@@ -128,7 +152,7 @@ object PurchaseStreaming {
           records => {
             //send each to another kafka topic
             val producer = KafkaProducerFactory.getOrCreateProducer(Map("bootstrap.servers" -> "192.168.10.5:9092,192.168.10.6:9092,192.168.10.7:9092"))
-            implicit val formats = DefaultFormats + new LocalDateTimeSerializer + new MemberSerializer
+            implicit val formats: Formats = DefaultFormats + new LocalDateTimeSerializer + new MemberSerializer
             records.foreach(record =>
               producer.send(new ProducerRecord[Long, String]("treatments", record.get.member.id, write(record.get)))
             )
