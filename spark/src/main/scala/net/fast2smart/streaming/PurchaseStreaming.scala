@@ -151,7 +151,7 @@ object PurchaseStreaming {
         .foreachPartition(
           records => {
             //send each to another kafka topic
-            val producer = KafkaProducerFactory.getOrCreateProducer(Map("bootstrap.servers" -> "192.168.10.5:9092,192.168.10.6:9092,192.168.10.7:9092"))
+            val producer = KafkaProducerFactory.getOrCreateProducer(Map("bootstrap.servers" -> "kafka-1:9092,kafka-2:9092,kafka-3:9092"))
             implicit val formats: Formats = DefaultFormats + new LocalDateTimeSerializer + new MemberSerializer
             records.foreach(record =>
               producer.send(new ProducerRecord[Long, String]("treatments", record.get.member.id, write(record.get)))

@@ -141,46 +141,25 @@ project(':legacy') {
 
 project(':flink') {
     apply plugin: 'scala'
-    apply plugin: 'groovy'
     apply plugin: 'com.github.johnrengelman.shadow'
 
     sourceSets {
         flink
-        systemTest
         main {
             compileClasspath = compileClasspath + configurations.flinkCompileClasspath
             runtimeClasspath = runtimeClasspath + configurations.flinkCompileClasspath
         }
     }
 
-    configurations {
-        systemTestCompile.extendsFrom testCompile
-        systemTestRuntime.extendsFrom testRuntime
-    }
-
     dependencies {
         //scala
         compile 'org.scala-lang:scala-library:2.11.+'
-        //groovy
-        compile 'org.codehaus.groovy:groovy-all:2.4.+'
 
         //flink
         compile 'org.apache.flink:flink-scala_2.11:1.3.2'
         compile 'org.apache.flink:flink-streaming-scala_2.11:1.3.2'
         flinkCompile 'org.apache.flink:flink-connector-kafka-0.10_2.11:1.3.2'
-
-        testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-        testCompile('com.athaydes:spock-reports:1.2.+' ) {
-            transitive = false
-        }
-
-        testCompile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
-        testCompile 'com.github.zhicwu:cassandra-jdbc-driver:0.6.1'
-
     }
-
-    build.dependsOn systemTestClasses
-
 
     jar.enabled false
     shadowJar {
@@ -227,28 +206,19 @@ project(':flink') {
 
 project(':spark') {
     apply plugin: 'scala'
-    apply plugin: 'groovy'
     apply plugin: 'com.github.johnrengelman.shadow'
 
     sourceSets {
         spark
-        systemTest
         main {
-            compileClasspath = compileClasspath + configurations.sparkCompileClasspath
-            runtimeClasspath = runtimeClasspath + configurations.sparkCompileClasspath
+            compileClasspath += configurations.sparkCompileClasspath
+            runtimeClasspath += configurations.sparkRuntimeClasspath
         }
-    }
-
-    configurations {
-        systemTestCompile.extendsFrom testCompile
-        systemTestRuntime.extendsFrom testRuntime
     }
 
     dependencies {
         //scala
         compile 'org.scala-lang:scala-library:2.11.+'
-        //groovy
-        compile 'org.codehaus.groovy:groovy-all:2.4.+'
 
         //spark
         compile('org.apache.spark:spark-core_2.11:2.2.0') {
@@ -272,16 +242,7 @@ project(':spark') {
         }
         //database
         sparkCompile 'com.h2database:h2:1.4.193'
-
-        testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-        testCompile('com.athaydes:spock-reports:1.2.+' ) {
-            transitive = false
-        }
-        testCompile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
-        testCompile 'com.github.zhicwu:cassandra-jdbc-driver:0.6.1'
     }
-
-    build.dependsOn systemTestClasses
 
     task aggregation(type:JavaExec) {
         main = 'net.fast2smart.batch.AccountAggregation'
@@ -330,6 +291,28 @@ project(':spark') {
     }
 
     build.dependsOn shadowJar
+}
+
+project(':systemtest') {
+    apply plugin: 'groovy'
+
+    dependencies {
+        //groovy
+        compile 'org.codehaus.groovy:groovy-all:2.4.+'
+
+
+        testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+        testCompile('com.athaydes:spock-reports:1.2.+' ) {
+            transitive = false
+        }
+        testCompile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+        testCompile 'com.github.zhicwu:cassandra-jdbc-driver:0.6.4'
+        testCompile 'com.h2database:h2:1.4.193'
+    }
+
+    test {
+        exclude '**/*Spec.class'
+    }
 }
 
 task wrapper(type: Wrapper) {

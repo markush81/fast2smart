@@ -59,7 +59,7 @@ Topic:enrolments	PartitionCount:6	ReplicationFactor:2	Configs:
 
 #### Apache Cassandra
 
-1. Copy cql scripts to `fastdata-cluster/exchange` folder.
+1. Copy cql from `systemtest/src/cassandra` scripts to `fastdata-cluster/exchange` folder.
 2. SSH into one of the analytics nodes:
 
 ```bash

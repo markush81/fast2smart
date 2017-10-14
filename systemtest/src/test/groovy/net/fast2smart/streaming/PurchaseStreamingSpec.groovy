@@ -22,15 +22,18 @@ class PurchaseStreamingSpec extends Specification {
             sql = Sql.newInstance("jdbc:h2:../db/fast2smart;AUTO_SERVER=TRUE", "sa", "", "org.h2.Driver")
 
     @Shared
-            cqlsh = Sql.newInstance("jdbc:c*:datastax://localhost/fast2smart", "cassandra", "cassandra", "com.github.cassandra.jdbc.CassandraDriver")
+            cqlsh = Sql.newInstance("jdbc:c*:datastax://cassandra-1/fast2smart", "cassandra", "cassandra", "com.github.cassandra.jdbc.CassandraDriver")
+
+    def card = 3204728185984
 
     def "enroled member should get a new delta entry"() {
         given: "clean database for this member"
-        def card = 3204728185984
-        cleanDb(card)
+        cleanMemberAccount(card)
         and: "fresh enroled member"
         def member = enrolMember(card)
         def memberId = memberId(member.card.number)
+        and: "cleaned cassandra"
+        cleanLambda(card)
         and: "member does a purchase"
         purchase(member.card.number)
         expect: "correct account balances"
@@ -46,11 +49,12 @@ class PurchaseStreamingSpec extends Specification {
 
     def "enroled member with given deltas before purchase should have higher delta"() {
         given: "clean database for this member"
-        def card = 3204728185984
-        cleanDb(card)
+        cleanMemberAccount(card)
         and: "fresh enroled member"
         def member = enrolMember(card)
         def memberId = memberId(member.card.number)
+        and: "cleaned cassandra"
+        cleanLambda(card)
         and: "already given delta"
         insertPresentDelta(memberId, 100, LocalDateTime.now())
         and: "member does a purchase"
@@ -68,11 +72,12 @@ class PurchaseStreamingSpec extends Specification {
 
     def "enroled member with given deltas after purchase should have same delta"() {
         given: "clean database for this member"
-        def card = 3204728185984
-        cleanDb(card)
+        cleanMemberAccount(card)
         and: "fresh enroled member"
         def member = enrolMember(card)
         def memberId = memberId(member.card.number)
+        and: "cleaned cassandra"
+        cleanLambda(card)
         and: "already given delta"
         insertPresentDelta(memberId, 100, LocalDateTime.now().plusDays(1))
         and: "member does a purchase"
@@ -90,12 +95,15 @@ class PurchaseStreamingSpec extends Specification {
 
     def "enroled member with no deltas yet but aggregated amount should get a treatment and have a new delta"() {
         given: "clean database for this member"
-        def card = 3204728185984
-        cleanDb(card)
+        cleanMemberAccount(card)
         and: "fresh enroled member"
         def member = enrolMember(card)
         def memberId = memberId(member.card.number)
-        and: "already given aggregated amount yeserterday"
+        and: "cleaned cassandra"
+        cleanLambda(card)
+        and: "cleaned treatments and purchases"
+        cleanTreatmentsAndPurchases(card)
+        and: "already given aggregated amount yesterday"
         insertPresentBatch(memberId, 150, LocalDateTime.now().minusDays(1))
         and: "member does a purchase"
         purchase(member.card.number)
@@ -115,12 +123,15 @@ class PurchaseStreamingSpec extends Specification {
 
     def "enroled member with no deltas yet but aggregated amount should not get a treatment but have a new delta"() {
         given: "clean database for this member"
-        def card = 3204728185984
-        cleanDb(card)
+        cleanMemberAccount(card)
         and: "fresh enroled member"
         def member = enrolMember(card)
         def memberId = memberId(member.card.number)
-        and: "already given aggregated amount yeserterday"
+        and: "cleaned cassandra"
+        cleanLambda(card)
+        and: "cleaned treatments and purchases"
+        cleanTreatmentsAndPurchases(card)
+        and: "already given aggregated amount yesterday"
         insertPresentBatch(memberId, 149, LocalDateTime.now().minusDays(1))
         and: "member does a purchase"
         purchase(member.card.number)
@@ -140,14 +151,17 @@ class PurchaseStreamingSpec extends Specification {
 
     def "enroled member with 'future' delta and aggregated amount should not get a treatment and have same delta"() {
         given: "clean database for this member"
-        def card = 3204728185984
-        cleanDb(card)
+        cleanMemberAccount(card)
         and: "fresh enroled member"
         def member = enrolMember(card)
         def memberId = memberId(member.card.number)
+        and: "cleaned cassandra"
+        cleanLambda(card)
+        and: "cleaned treatments and purchases"
+        cleanTreatmentsAndPurchases(card)
         and: "already given delta"
         insertPresentDelta(memberId, 100, LocalDateTime.now().plusDays(1))
-        and: "already given aggregated amount yeserterday"
+        and: "already given aggregated amount yesterday"
         insertPresentBatch(memberId, 50, LocalDateTime.now().minusDays(1))
         and: "member does a purchase"
         purchase(member.card.number)
@@ -167,14 +181,17 @@ class PurchaseStreamingSpec extends Specification {
 
     def "enroled member with delta and aggregated amount should get a treatment and have an updated delta"() {
         given: "clean database for this member"
-        def card = 3204728185984
-        cleanDb(card)
+        cleanMemberAccount(card)
         and: "fresh enroled member"
         def member = enrolMember(card)
         def memberId = memberId(member.card.number)
+        and: "cleaned cassandra"
+        cleanLambda(card)
+        and: "cleaned treatments and purchases"
+        cleanTreatmentsAndPurchases(card)
         and: "already given delta"
         insertPresentDelta(memberId, 100, LocalDateTime.now())
-        and: "already given aggregated amount yeserterday"
+        and: "already given aggregated amount yesterday"
         insertPresentBatch(memberId, 50, LocalDateTime.now().minusDays(1))
         and: "member does a purchase"
         purchase(member.card.number)
@@ -194,14 +211,17 @@ class PurchaseStreamingSpec extends Specification {
 
     def "enroled member with newer delta and aggregated amount should not get a treatment but have an updated delta"() {
         given: "clean database for this member"
-        def card = 3204728185984
-        cleanDb(card)
+        cleanMemberAccount(card)
         and: "fresh enroled member"
         def member = enrolMember(card)
         def memberId = memberId(member.card.number)
+        and: "cleaned cassandra"
+        cleanLambda(card)
+        and: "cleaned treatments and purchases"
+        cleanTreatmentsAndPurchases(card)
         and: "already given delta but yesterday"
         insertPresentDelta(memberId, 100, LocalDateTime.now().plusDays(1))
-        and: "already given aggregated amount yeserterday"
+        and: "already given aggregated amount yesterday"
         insertPresentBatch(memberId, 49, LocalDateTime.now().minusDays(1))
         and: "member does a purchase"
         purchase(member.card.number)
@@ -287,13 +307,27 @@ class PurchaseStreamingSpec extends Specification {
         }
     }
 
-    def cleanDb(card) {
+    def cleanMemberAccount(card) {
         def memberId = memberId(card)
         if (memberId != null) {
             sql.execute("DELETE FROM account WHERE member_id = $memberId;")
             sql.execute("DELETE FROM purchase WHERE member_id = $memberId;")
             sql.execute("DELETE FROM treatment WHERE member_id = $memberId;")
             sql.execute("DELETE FROM member WHERE id = $memberId;")
+        }
+    }
+
+    def cleanTreatmentsAndPurchases(card) {
+        def memberId = memberId(card)
+        if (memberId != null) {
+            sql.execute("DELETE FROM purchase WHERE member_id = $memberId;")
+            sql.execute("DELETE FROM treatment WHERE member_id = $memberId;")
+        }
+    }
+
+    def cleanLambda(card) {
+        def memberId = memberId(card)
+        if (memberId != null) {
             cqlsh.execute("DELETE FROM fast2smart.member_delta_balance WHERE member = $memberId;")
             cqlsh.execute("DELETE FROM fast2smart.member_monthly_balance WHERE member = $memberId;")
         }
