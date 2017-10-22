@@ -16,13 +16,15 @@ object PurchaseStreaming {
     val kafkaParams = new Properties()
     kafkaParams.setProperty("bootstrap.servers", "kafka-1:9092,kafka-2:9092,kafka-3:9092")
     kafkaParams.setProperty("group.id", "purchase-streaming-flink")
+    kafkaParams.setProperty("auto.offset.reset", "latest")
 
     val kafkaSource = new FlinkKafkaConsumer010[String]("purchases", new SimpleStringSchema(), kafkaParams)
-    kafkaSource.setStartFromEarliest()
+    kafkaSource.setStartFromLatest()
+    kafkaSource.setCommitOffsetsOnCheckpoints(true)
 
     streamingEnvironment
       .addSource(kafkaSource)
-      .print()
+      .addSink(record => println(record))
 
     streamingEnvironment.execute("PurchaseStreaming")
   }
