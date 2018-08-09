@@ -8,19 +8,10 @@ buildscript {
 }
 
 plugins {
-    id 'org.sonarqube' version '2.5'
     id 'com.github.lkishalmi.gatling' version '0.4.1' apply false
     id 'com.github.johnrengelman.shadow' version '2.0.1' apply false
     id 'org.hidetake.ssh' version '2.9.0'
 }
-
-sonarqube {
-    properties {
-        property "sonar.projectName", "From Fast to Smart Data"
-        property "sonar.projectKey", "markush81.net.fast2smart"
-    }
-}
-
 
 remotes {
     hadoopMaster {

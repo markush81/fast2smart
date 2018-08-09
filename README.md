@@ -1,6 +1,6 @@
 # From Fast to Smart Data
 
-[![Build Status](https://travis-ci.org/markush81/fast2smart.svg?branch=master)](https://travis-ci.org/markush81/fast2smart) [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=markush81.net.fast2smart&metric=alert_status)](https://sonarcloud.io/dashboard?id=markush81.net.fast2smart)
+* [![Build Status](https://travis-ci.com/markush81/fast2smart.svg?branch=master)](https://travis-ci.com/markush81/fast2smart) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/65ccc39fdd0343978f31d74d2b50054d)](https://www.codacy.com/app/mhelbig81/fast2smart?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=markush81/fast2smart&amp;utm_campaign=Badge_Grade)
 
 #### Lambda Architecture with Apache Spark, Kafka and Cassandra
 
