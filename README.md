@@ -1,6 +1,6 @@
 # From Fast to Smart Data
 
-* [![Build Status](https://travis-ci.com/markush81/fast2smart.svg?branch=master)](https://travis-ci.com/markush81/fast2smart) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/65ccc39fdd0343978f31d74d2b50054d)](https://www.codacy.com/app/mhelbig81/fast2smart?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=markush81/fast2smart&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.com/markush81/fast2smart.svg?branch=master)](https://travis-ci.com/markush81/fast2smart) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/65ccc39fdd0343978f31d74d2b50054d)](https://www.codacy.com/app/markush81/fast2smart?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=markush81/fast2smart&amp;utm_campaign=Badge_Grade)
 
 #### Lambda Architecture with Apache Spark, Kafka and Cassandra
 
